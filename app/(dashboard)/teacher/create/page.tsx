@@ -1,0 +1,86 @@
+"use client";
+
+import React from "react";
+import * as z from "zod";
+import axios from "axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormLabel,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
+const formSchema = z.object({
+  title: z.string().min(1, { message: "Title is required" }),
+});
+
+const CreateCoursePage = () => {
+  const router = useRouter();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+    },
+  });
+
+  const { isSubmitting, isValid } = form.formState;
+
+  const submit_course = (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+  };
+  return (
+    <div className="max-w-5xl mx-auto h-full md:items-center md:justify-center flex p-6">
+      <div>
+        <h1 className="text-2xl font-medium">Name your course</h1>
+        <p className="text-sm text-slate-600">
+          What would you like to name your course? Don&apos;t worry, you can
+          change it later.
+        </p>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(submit_course)}
+            className="space-y-8 mt-8"
+          >
+            <FormField
+              name="title"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Course Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={isSubmitting}
+                      placeholder="E.g 'Advance Intelligence Course'"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    What will you teach in this course?
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex items-center gap-x-2">
+              <Button variant={"ghost"} onClick={() => router.back()}>
+                Cancel
+              </Button>
+              <Button type="submit">Continue</Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
+  );
+};
+
+export default CreateCoursePage;
